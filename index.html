@@ -5,67 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Civil Calc Pro | Engineering Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="src/styles/main.css">
     <style>
-        .active-link { border-left: 4px solid #2563eb; background: #f1f5f9; }
+        /* Sidebar and Layout Tweaks */
+        .sidebar-link { cursor: pointer; transition: 0.2s; }
+        .hidden { display: none; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-gray-50 text-gray-900 antialiased">
 
-    <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-xl hidden md:block overflow-y-auto">
-        <div class="p-6">
-            <h1 class="text-xl font-bold text-blue-600">Civil Calc Pro</h1>
-            <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Engineer's Toolkit</p>
-        </div>
-        <nav class="mt-4">
-            <a href="#" class="block py-3 px-6 active-link font-medium">1. Concrete & Steel</a>
-            <a href="#" class="block py-3 px-6 text-gray-600 hover:bg-gray-100">2. Length Converter</a>
-            <a href="#" class="block py-3 px-6 text-gray-600 hover:bg-gray-100">3. Earthwork</a>
-            <a href="#" class="block py-3 px-6 text-gray-600 hover:bg-gray-100">6. BBS Schedule</a>
-            <div class="border-t my-4"></div>
-            <a href="./docs/api-ref.md" class="block py-3 px-6 text-sm text-blue-500 hover:underline">📚 Documentation</a>
-        </nav>
-    </aside>
+    <header class="md:hidden bg-blue-600 text-white p-4 flex justify-between items-center">
+        <h1 class="font-bold">Civil Calc Pro</h1>
+        <button id="menu-toggle" class="text-2xl">☰</button>
+    </header>
 
-    <main class="md:ml-64 p-8">
-        <header class="mb-10">
-            <h2 class="text-3xl font-semibold">Concrete & Steel Quantity</h2>
-            <p class="text-gray-500">Calculate materials for slabs, beams, and columns.</p>
-        </header>
-
-        <section class="max-w-4xl bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="flex">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-2xl md:shadow-none border-r border-gray-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50 overflow-y-auto">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-blue-600 tracking-tight">Civil Calc Pro</h1>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Professional Suite v1.0</p>
+            </div>
+            
+            <nav class="mt-4 px-3 space-y-1">
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase mb-2">Calculators</p>
+                <a data-target="concrete" class="sidebar-link active-link flex items-center px-3 py-2 rounded-md">1. Concrete & Steel</a>
+                <a data-target="length" class="sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">2. Length Converter</a>
+                <a data-target="earthwork" class="sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">3. Earthwork</a>
+                <a data-target="bricks" class="sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">11. Brickwork & Mortar</a>
                 
-                <div class="space-y-4">
-                    <h3 class="font-bold text-lg mb-4">Dimensions (m)</h3>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Length</label>
-                        <input type="number" id="len" class="w-full mt-1 p-2 border rounded" placeholder="10.0">
+                <div class="my-6 border-t border-gray-100"></div>
+                
+                <p class="px-3 text-xs font-semibold text-gray-400 uppercase mb-2">Documentation</p>
+                <a href="docs/api-ref.md" class="flex items-center px-3 py-2 text-sm text-blue-500 hover:underline">📄 API Reference</a>
+                <a href="docs/cli-usage.md" class="flex items-center px-3 py-2 text-sm text-blue-500 hover:underline">💻 CLI Guide</a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 md:ml-64 min-h-screen p-4 md:p-10">
+            
+            <div id="app-viewport" class="max-w-4xl mx-auto">
+                <div id="active-tool-header" class="mb-8">
+                    <h2 id="tool-title" class="text-3xl font-bold text-gray-800">Concrete & Steel Quantity</h2>
+                    <p id="tool-desc" class="text-gray-500 mt-2">Professional material estimation with 1.54 dry volume factor.</p>
+                </div>
+
+                <div id="tool-ui-container" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Width / Breadth</label>
-                        <input type="number" id="wid" class="w-full mt-1 p-2 border rounded" placeholder="5.0">
+
+                <div id="results-display" class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Depth / Thickness</label>
-                        <input type="number" id="dep" class="w-full mt-1 p-2 border rounded" placeholder="0.15">
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import CivilCalc from './src/logic/calculators.js';
+        import { UIComponents } from './src/components/CalculatorCards.js';
+
+        const viewport = document.getElementById('tool-ui-container');
+        const resultsArea = document.getElementById('results-display');
+
+        // 1. Initial Load (Concrete Tool)
+        window.addEventListener('load', () => {
+            loadTool('concrete');
+        });
+
+        // 2. Navigation Control
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const target = e.target.getAttribute('data-target');
+                
+                // UI Toggle
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active-link'));
+                e.target.classList.add('active-link');
+                
+                loadTool(target);
+            });
+        });
+
+        // 3. Tool Loader function
+        function loadTool(type) {
+            resultsArea.innerHTML = ""; // Clear old results
+            
+            if (type === 'concrete') {
+                viewport.innerHTML = UIComponents.concreteCard;
+                document.getElementById('tool-title').innerText = "Concrete & Steel Quantity";
+                
+                // Attach Event Listener to the newly injected button
+                document.getElementById('calc-concrete').onclick = () => {
+                    const l = parseFloat(document.getElementById('L').value);
+                    const w = parseFloat(document.getElementById('W').value);
+                    const d = parseFloat(document.getElementById('D').value);
+                    const res = CivilCalc.calculateConcrete(l, w, d);
+                    
+                    resultsArea.innerHTML = `
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <p class="text-xs font-bold text-blue-600 uppercase">Cement Bags</p>
+                            <p class="text-2xl font-mono font-bold">${res.cementBags}</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <p class="text-xs font-bold text-gray-500 uppercase">Sand (m³)</p>
+                            <p class="text-2xl font-mono">${res.sand}</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <p class="text-xs font-bold text-gray-500 uppercase">Aggregates (m³)</p>
+                            <p class="text-2xl font-mono">${res.aggregate}</p>
+                        </div>
+                    `;
+                };
+            }
+            
+            if (type === 'length') {
+                viewport.innerHTML = `
+                    <div class="p-4 bg-yellow-50 text-yellow-800 rounded">
+                        Length Converter UI is active. Enter values below.
                     </div>
-                    <button class="w-full bg-blue-600 text-white
+                ` + UIComponents.lengthCard; // Assuming you add lengthCard to UIComponents
+            }
+        }
 
-<script type="module">
-    import CivilCalc from './src/logic/calculators.js';
-
-    const btn = document.querySelector('button');
-    btn.addEventListener('click', () => {
-        const L = parseFloat(document.getElementById('len').value) || 0;
-        const W = parseFloat(document.getElementById('wid').value) || 0;
-        const D = parseFloat(document.getElementById('dep').value) || 0;
-
-        // Using standard M20 ratio (1:1.5:3) for now
-        const results = CivilCalc.calculateConcrete(L, W, D, 1, 1.5, 3);
-
-        document.getElementById('res-cement').innerText = results.cementBags;
-        document.getElementById('res-sand').innerText = results.sand;
-        document.getElementById('res-agg').innerText = results.aggregate;
-        document.getElementById('res-wet').innerText = results.wetVolume;
-    });
-</script>
+        // Mobile Menu Toggle
+        document.getElementById('menu-toggle').onclick = () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        };
+    </script>
+</body>
+</html>

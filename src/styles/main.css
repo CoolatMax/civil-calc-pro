@@ -1,0 +1,97 @@
+/* * Civil Calc Pro - Sophisticated Engineering Styles
+ * Focus: Scannability, Precision, and Mobile-First responsiveness.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    --primary-blue: #2563eb;
+    --sidebar-bg: #ffffff;
+    --app-bg: #f8fafc;
+    --border-color: #e2e8f0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--app-bg);
+}
+
+/* 1. Sophisticated Sidebar */
+.sidebar-link {
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-blue);
+}
+
+.active-link {
+    background-color: #eff6ff;
+    color: var(--primary-blue);
+    border-left: 4px solid var(--primary-blue);
+    font-weight: 600;
+}
+
+/* 2. Interactive Diagram Styling (The "Engineering" Look) */
+.diagram-container {
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px; /* Engineering grid paper effect */
+    border: 1px solid var(--border-color);
+    position: relative;
+    min-height: 200px;
+}
+
+.dimension-line {
+    stroke: #64748b;
+    stroke-width: 1;
+    fill: none;
+}
+
+.dimension-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--primary-blue);
+}
+
+/* 3. Typography for Results */
+.result-value {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.05em;
+}
+
+/* 4. Input Focus States */
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* 5. Seamless Efficiency: Mobile Adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+    
+    /* Ensure inputs are easily tappable on site */
+    input, select, button {
+        min-height: 44px;
+    }
+}
+
+/* 6. Technical Writing Feature: Print Reports */
+@media print {
+    aside, button, .docs-link {
+        display: none !important;
+    }
+    main {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .max-w-4xl {
+        max-width: 100% !important;
+        border: none !important;
+        shadow: none !important;
+    }
+}

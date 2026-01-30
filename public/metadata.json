@@ -1,0 +1,18 @@
+{
+  "site_name": "Civil Calc Pro",
+  "version": "1.0.0",
+  "author": "Technical Writer Portfolio",
+  "constants": {
+    "dry_volume_factor": 1.54,
+    "cement_bag_volume_m3": 0.0347,
+    "steel_density_factor": 162
+  },
+  "tools": [
+    {"id": "concrete", "name": "Concrete & Ingredients", "icon": "cube"},
+    {"id": "length", "name": "Length Converter", "icon": "ruler"},
+    {"id": "earthwork", "name": "Earthwork Calculation", "icon": "mountain"},
+    {"id": "bbs", "name": "Bar Bending Schedule", "icon": "layers"},
+    {"id": "bricks", "name": "Brickwork & Mortar", "icon": "grid"},
+    {"id": "rate", "name": "Rate Analysis", "icon": "table"}
+  ]
+}
