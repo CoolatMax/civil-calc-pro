@@ -1,133 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Civil Calc Pro | Engineering Suite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="src/styles/main.css">
-    <style>
-        /* Sidebar and Layout Tweaks */
-        .sidebar-link { cursor: pointer; transition: 0.2s; }
-        .hidden { display: none; }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-900 antialiased">
+<nav class="mt-4 px-3 space-y-1" id="main-nav">
+    <p class="px-3 text-xs font-semibold text-gray-400 uppercase mb-2">Calculators</p>
+    </nav>
 
-    <header class="md:hidden bg-blue-600 text-white p-4 flex justify-between items-center">
-        <h1 class="font-bold">Civil Calc Pro</h1>
-        <button id="menu-toggle" class="text-2xl">☰</button>
-    </header>
+<script type="module">
+    import CivilCalc from './src/logic/calculators.js';
+    import { UIComponents } from './src/components/CalculatorCards.js';
 
-    <div class="flex">
-        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-2xl md:shadow-none border-r border-gray-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-50 overflow-y-auto">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold text-blue-600 tracking-tight">Civil Calc Pro</h1>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Professional Suite v1.0</p>
-            </div>
+    const navContainer = document.getElementById('main-nav');
+    const viewport = document.getElementById('tool-ui-container');
+    const resultsArea = document.getElementById('results-display');
+    const toolTitle = document.getElementById('tool-title');
+    const toolDesc = document.getElementById('tool-desc');
+
+    // Full List of 16 Tools
+    const tools = [
+        { id: 'concrete', name: '1. Concrete & Steel', desc: 'Material estimation with 1.54 dry volume factor.' },
+        { id: 'length', name: '2. Length Converter', desc: 'Instant conversion between Metric and Imperial.' },
+        { id: 'earthwork', name: '3. Earthwork', desc: 'Excavation and backfill volume with slope logic.' },
+        { id: 'bricks', name: '11. Brickwork & Mortar', desc: 'Calculate brick counts and wet/dry mortar.' },
+        { id: 'steel', name: '6. Steel Weight', desc: 'Reinforcement bar weight based on diameter.' },
+        { id: 'rate', name: '16. Rate Analysis', desc: 'Professional cost and labor breakdown.' }
+        // Add remaining tool IDs here as you define them in CalculatorCards.js
+    ];
+
+    // Initialize Sidebar
+    tools.forEach(tool => {
+        const link = document.createElement('a');
+        link.className = 'sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100 mb-1';
+        link.innerText = tool.name;
+        link.onclick = () => loadTool(tool);
+        navContainer.appendChild(link);
+    });
+
+    function loadTool(tool) {
+        // Reset UI
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active-link', 'bg-blue-50', 'text-blue-600'));
+        event.target.classList.add('active-link', 'bg-blue-50', 'text-blue-600');
+        
+        toolTitle.innerText = tool.name;
+        toolDesc.innerText = tool.desc;
+        resultsArea.innerHTML = "";
+
+        // Fix for "undefined" error: Ensure ID matches UIComponents keys
+        const templateKey = tool.id + 'Card'; 
+        viewport.innerHTML = UIComponents[templateKey] || `<p class="p-4 text-gray-400">UI Template for ${tool.name} coming soon...</p>`;
+
+        setupListeners(tool.id);
+    }
+
+    function setupListeners(id) {
+        if (id === 'concrete') {
+            const btn = document.getElementById('calc-concrete');
+            const inputs = ['L', 'W', 'D'];
             
-            <nav class="mt-4 px-3 space-y-1">
-                <p class="px-3 text-xs font-semibold text-gray-400 uppercase mb-2">Calculators</p>
-                <a data-target="concrete" class="sidebar-link active-link flex items-center px-3 py-2 rounded-md">1. Concrete & Steel</a>
-                <a data-target="length" class="sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">2. Length Converter</a>
-                <a data-target="earthwork" class="sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">3. Earthwork</a>
-                <a data-target="bricks" class="sidebar-link flex items-center px-3 py-2 rounded-md text-gray-600 hover:bg-gray-100">11. Brickwork & Mortar</a>
-                
-                <div class="my-6 border-t border-gray-100"></div>
-                
-                <p class="px-3 text-xs font-semibold text-gray-400 uppercase mb-2">Documentation</p>
-                <a href="docs/api-ref.md" class="flex items-center px-3 py-2 text-sm text-blue-500 hover:underline">📄 API Reference</a>
-                <a href="docs/cli-usage.md" class="flex items-center px-3 py-2 text-sm text-blue-500 hover:underline">💻 CLI Guide</a>
-            </nav>
-        </aside>
-
-        <main class="flex-1 md:ml-64 min-h-screen p-4 md:p-10">
-            
-            <div id="app-viewport" class="max-w-4xl mx-auto">
-                <div id="active-tool-header" class="mb-8">
-                    <h2 id="tool-title" class="text-3xl font-bold text-gray-800">Concrete & Steel Quantity</h2>
-                    <p id="tool-desc" class="text-gray-500 mt-2">Professional material estimation with 1.54 dry volume factor.</p>
-                </div>
-
-                <div id="tool-ui-container" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
-                    </div>
-
-                <div id="results-display" class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    </div>
-            </div>
-        </main>
-    </div>
-
-    <script type="module">
-        import CivilCalc from './src/logic/calculators.js';
-        import { UIComponents } from './src/components/CalculatorCards.js';
-
-        const viewport = document.getElementById('tool-ui-container');
-        const resultsArea = document.getElementById('results-display');
-
-        // 1. Initial Load (Concrete Tool)
-        window.addEventListener('load', () => {
-            loadTool('concrete');
-        });
-
-        // 2. Navigation Control
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const target = e.target.getAttribute('data-target');
-                
-                // UI Toggle
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active-link'));
-                e.target.classList.add('active-link');
-                
-                loadTool(target);
+            // Fix: Live update the schematic values in the picture
+            inputs.forEach(inputId => {
+                document.getElementById(inputId).addEventListener('input', (e) => {
+                    const label = document.querySelector(`.abs-${inputId}`); // You can add these classes to your SVG text
+                    if(label) label.textContent = e.target.value + 'm';
+                });
             });
-        });
 
-        // 3. Tool Loader function
-        function loadTool(type) {
-            resultsArea.innerHTML = ""; // Clear old results
-            
-            if (type === 'concrete') {
-                viewport.innerHTML = UIComponents.concreteCard;
-                document.getElementById('tool-title').innerText = "Concrete & Steel Quantity";
-                
-                // Attach Event Listener to the newly injected button
-                document.getElementById('calc-concrete').onclick = () => {
-                    const l = parseFloat(document.getElementById('L').value);
-                    const w = parseFloat(document.getElementById('W').value);
-                    const d = parseFloat(document.getElementById('D').value);
-                    const res = CivilCalc.calculateConcrete(l, w, d);
-                    
-                    resultsArea.innerHTML = `
-                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                            <p class="text-xs font-bold text-blue-600 uppercase">Cement Bags</p>
-                            <p class="text-2xl font-mono font-bold">${res.cementBags}</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <p class="text-xs font-bold text-gray-500 uppercase">Sand (m³)</p>
-                            <p class="text-2xl font-mono">${res.sand}</p>
-                        </div>
-                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <p class="text-xs font-bold text-gray-500 uppercase">Aggregates (m³)</p>
-                            <p class="text-2xl font-mono">${res.aggregate}</p>
-                        </div>
-                    `;
-                };
-            }
-            
-            if (type === 'length') {
-                viewport.innerHTML = `
-                    <div class="p-4 bg-yellow-50 text-yellow-800 rounded">
-                        Length Converter UI is active. Enter values below.
-                    </div>
-                ` + UIComponents.lengthCard; // Assuming you add lengthCard to UIComponents
-            }
+            btn.onclick = () => {
+                const res = CivilCalc.calculateConcrete(
+                    parseFloat(document.getElementById('L').value) || 0,
+                    parseFloat(document.getElementById('W').value) || 0,
+                    parseFloat(document.getElementById('D').value) || 0
+                );
+                renderResults(res);
+            };
         }
+    }
 
-        // Mobile Menu Toggle
-        document.getElementById('menu-toggle').onclick = () => {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        };
-    </script>
-</body>
-</html>
+    function renderResults(res) {
+        resultsArea.innerHTML = `
+            <div class="p-6 bg-white border rounded-xl shadow-sm text-center">
+                <span class="text-gray-400 text-xs uppercase">Cement Bags</span>
+                <div class="text-3xl font-bold text-blue-600">${res.cementBags.toFixed(2)}</div>
+            </div>
+            <div class="p-6 bg-white border rounded-xl shadow-sm text-center">
+                <span class="text-gray-400 text-xs uppercase">Sand (m³)</span>
+                <div class="text-3xl font-bold">${res.sand.toFixed(3)}</div>
+            </div>
+            <div class="p-6 bg-white border rounded-xl shadow-sm text-center">
+                <span class="text-gray-400 text-xs uppercase">Aggregate (m³)</span>
+                <div class="text-3xl font-bold">${res.aggregate.toFixed(3)}</div>
+            </div>
+        `;
+    }
+
+    // Load first tool by default
+    loadTool(tools[0]);
+</script>
