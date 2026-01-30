@@ -17,29 +17,25 @@
     <aside class="fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-200 z-50 overflow-y-auto hidden md:block">
         <div class="p-6 border-b">
             <h1 class="text-2xl font-black text-blue-600 tracking-tighter">CIVIL CALC PRO</h1>
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Industrial Grade • v1.0</p>
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Professional Suite v1.0</p>
         </div>
-        
         <nav class="mt-4 px-3 pb-20" id="main-nav">
             <p class="px-3 text-xs font-bold text-gray-400 uppercase mb-4 mt-2">Core Engineering Tools</p>
-            </nav>
+        </nav>
     </aside>
 
     <main class="flex-1 md:ml-72 min-h-screen p-6 lg:p-12">
         <div class="max-w-5xl mx-auto">
             <header class="mb-10">
                 <div class="flex items-center gap-2 text-blue-600 mb-2">
-                    <span id="tool-category" class="text-xs font-bold uppercase tracking-widest">Structural Analysis</span>
+                    <span id="tool-category" class="text-xs font-bold uppercase tracking-widest">Site Analysis</span>
                 </div>
                 <h2 id="tool-title" class="text-4xl font-extrabold text-gray-900 tracking-tight">Select a Module</h2>
                 <p id="tool-desc" class="text-lg text-gray-500 mt-2 max-w-2xl"></p>
             </header>
 
-            <div id="viewport" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300">
-                <div class="p-20 text-center text-gray-300">
-                    <p class="text-xl">Initialize a module from the sidebar</p>
+            <div id="viewport" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden min-h-[400px]">
                 </div>
-            </div>
 
             <div id="results-area" class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 opacity-0 transition-opacity duration-500">
                 </div>
@@ -50,31 +46,29 @@
         import CivilCalc from './src/logic/calculators.js';
         import { UIComponents } from './src/components/CalculatorCards.js';
 
-        // The Full 16-Function Registry
         const tools = [
-            { id: 'concrete', cat: 'Material', name: '1. Concrete & Steel', desc: 'Precise estimation for slabs, beams, and columns with dry volume shrinkage.' },
-            { id: 'length', cat: 'Utility', name: '2. Length Converter', desc: 'High-precision conversion between Metric and Imperial engineering units.' },
-            { id: 'earthwork', cat: 'Site', name: '3. Earthwork', desc: 'Calculate excavation and backfill volumes for pits and trenches.' },
-            { id: 'steel', cat: 'Structural', name: '4. Steel Weight', desc: 'Reinforcement bar weight calculation based on diameter and length.' },
-            { id: 'bricks', cat: 'Masonry', name: '5. Brickwork & Mortar', desc: 'Wall quantity estimation including brick counts and wet/dry mortar.' },
-            { id: 'plaster', cat: 'Finishing', name: '6. Plastering', desc: 'Cement and sand requirements for wall and ceiling plastering.' },
-            { id: 'flooring', cat: 'Finishing', name: '7. Flooring/Tiling', desc: 'Area-based tile count and bedding mortar calculation.' },
-            { id: 'wood', cat: 'Carpentry', name: '8. Woodwork', desc: 'Volume estimation for timber frames and furniture.' },
-            { id: 'paint', cat: 'Finishing', name: '9. Painting', desc: 'Coverage estimation for primers, distemper, and emulsion.' },
-            { id: 'column', cat: 'Structural', name: '10. Column Capacity', desc: 'Ultimate axial load carrying capacity of RCC columns.' },
-            { id: 'shuttering', cat: 'Site', name: '11. Shuttering Area', desc: 'Formwork surface area for cost estimation.' },
-            { id: 'water', cat: 'Storage', name: '12. Tank Capacity', desc: 'Water storage volume for rectangular and circular tanks.' },
-            { id: 'slope', cat: 'Utility', name: '13. Slope/Gradient', desc: 'Calculate pitch and run for ramps and drainage.' },
-            { id: 'weight', cat: 'Material', name: '14. Material Weights', desc: 'Density-based weight check for sand, stone, and soil.' },
-            { id: 'manpower', cat: 'Management', name: '15. Manpower Estimator', desc: 'Labor productivity based on work volume.' },
-            { id: 'rate', cat: 'Finance', name: '16. Rate Analysis', desc: 'Composite cost estimation per unit of work.' }
+            { id: 'concrete', cat: 'Material', name: '1. Concrete & Steel', desc: 'Material estimation with 1.54 dry volume factor.' },
+            { id: 'length', cat: 'Utility', name: '2. Length Converter', desc: 'Precision unit conversion between Metric and Imperial.' },
+            { id: 'earthwork', cat: 'Site', name: '3. Earthwork', desc: 'Excavation and backfill volume for pits and trenches.' },
+            { id: 'steel', cat: 'Structural', name: '4. Steel Weight', desc: 'Weight calculation based on bar diameter (D²/162).' },
+            { id: 'bricks', cat: 'Masonry', name: '5. Brickwork & Mortar', desc: 'Wall quantity estimation including brick counts and mortar.' },
+            { id: 'plaster', cat: 'Finishing', name: '6. Plastering', desc: 'Cement and sand requirements for wall plaster.' },
+            { id: 'flooring', cat: 'Finishing', name: '7. Flooring/Tiling', desc: 'Tile count and bedding mortar calculation.' },
+            { id: 'wood', cat: 'Carpentry', name: '8. Woodwork', desc: 'Volume estimation for timber and woodwork.' },
+            { id: 'paint', cat: 'Finishing', name: '9. Painting', desc: 'Primer and paint coverage estimation.' },
+            { id: 'column', cat: 'Structural', name: '10. Column Capacity', desc: 'RCC column axial load carrying capacity.' },
+            { id: 'shuttering', cat: 'Site', name: '11. Shuttering Area', desc: 'Formwork surface area calculation.' },
+            { id: 'water', cat: 'Storage', name: '12. Tank Capacity', desc: 'Water storage volume in liters.' },
+            { id: 'slope', cat: 'Utility', name: '13. Slope/Gradient', desc: 'Pitch and run for ramps and drainage.' },
+            { id: 'weight', cat: 'Material', name: '14. Material Weights', desc: 'Density-based material weight check.' },
+            { id: 'manpower', cat: 'Management', name: '15. Manpower Estimator', desc: 'Labor productivity and requirement.' },
+            { id: 'rate', cat: 'Finance', name: '16. Rate Analysis', desc: 'Composite cost estimation per unit.' }
         ];
 
         const nav = document.getElementById('main-nav');
         const viewport = document.getElementById('viewport');
         const results = document.getElementById('results-area');
 
-        // Initialize Sidebar
         function init() {
             tools.forEach(tool => {
                 const div = document.createElement('div');
@@ -83,34 +77,24 @@
                 div.onclick = (e) => loadModule(tool, e.currentTarget);
                 nav.appendChild(div);
             });
-            // Auto-load first tool
-            setTimeout(() => nav.children[1].click(), 100);
+            loadModule(tools[0], nav.children[1]); 
         }
 
         function loadModule(tool, element) {
-            // UI Toggle
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active-link'));
-            element.classList.add('active-link');
+            if(element) element.classList.add('active-link');
 
-            // Header Update
             document.getElementById('tool-category').innerText = tool.cat;
             document.getElementById('tool-title').innerText = tool.name;
             document.getElementById('tool-desc').innerText = tool.desc;
 
-            // Template Injection
+            // Load UI from CalculatorCards.js
             const template = UIComponents[tool.id + 'Card'];
-            viewport.innerHTML = template || `
-                <div class="p-20 text-center">
-                    <div class="inline-block p-4 rounded-full bg-yellow-50 text-yellow-600 mb-4 font-bold">Calibration Required</div>
-                    <p class="text-gray-400 font-medium">The <b>${tool.name}</b> template is being verified against local codes.</p>
-                </div>
-            `;
+            viewport.innerHTML = template || `<div class="p-20 text-center text-gray-400">UI for ${tool.name} is loading...</div>`;
 
-            // Reset Results
             results.style.opacity = '0';
-            setTimeout(() => { results.innerHTML = ""; }, 300);
+            results.innerHTML = "";
 
-            // Logic Binding
             bindModuleLogic(tool.id);
         }
 
@@ -119,14 +103,12 @@
             if (!btn) return;
 
             btn.onclick = () => {
-                let data = {};
                 results.style.opacity = '1';
+                let data;
 
                 switch(id) {
                     case 'concrete':
-                        data = CivilCalc.calculateConcrete(
-                            val('L'), val('W'), val('D')
-                        );
+                        data = CivilCalc.calculateConcrete(val('L'), val('W'), val('D'));
                         renderResults([
                             { label: 'Cement Bags', val: data.cementBags, unit: 'Bags' },
                             { label: 'Sand', val: data.sand, unit: 'm³' },
@@ -134,24 +116,59 @@
                         ]);
                         break;
                     case 'length':
-                        const conv = CivilCalc.convertLength(val('unit-val'), val('unit-from', true), val('unit-to', true));
-                        renderResults([{ label: 'Converted Result', val: conv, unit: val('unit-to', true), span: 'md:col-span-3' }]);
+                        data = CivilCalc.convertLength(val('unit-val'), val('unit-from', true), val('unit-to', true));
+                        renderResults([{ label: 'Converted Result', val: data, unit: val('unit-to', true), span: 'md:col-span-3' }]);
                         break;
-                    // Additional cases (earthwork, steel, bricks) follow this pattern
+                    case 'earthwork':
+                        data = CivilCalc.calculateEarthwork(val('e-L'), val('e-W'), val('e-D'));
+                        renderResults([{ label: 'Total Volume', val: data.volume, unit: 'm³', span: 'md:col-span-3' }]);
+                        break;
+                    case 'steel':
+                        data = CivilCalc.calculateSteel(val('dia'), val('len'));
+                        renderResults([{ label: 'Total Weight', val: data, unit: 'kg', span: 'md:col-span-3' }]);
+                        break;
+                    case 'bricks':
+                        data = CivilCalc.calculateBricks(val('wall-vol'));
+                        renderResults([
+                            { label: 'Total Bricks', val: data.bricks, unit: 'No.' },
+                            { label: 'Mortar Volume', val: data.mortar, unit: 'm³' }
+                        ]);
+                        break;
+                    case 'plaster':
+                        data = CivilCalc.calculatePlaster(val('p-area'), val('p-thick'));
+                        renderResults([
+                            { label: 'Cement Required', val: data.cement, unit: 'Bags' },
+                            { label: 'Sand Required', val: data.sand, unit: 'm³' }
+                        ]);
+                        break;
+                    case 'flooring':
+                        data = CivilCalc.calculateFlooring(val('area'), val('tileSize')); // Ensure inputs exist in Cards.js
+                        renderResults([{ label: 'Tiles Needed', val: data.count, unit: 'pcs' }]);
+                        break;
+                    case 'water':
+                        data = CivilCalc.calculateTank(val('t-L'), val('t-W'), val('t-H'));
+                        renderResults([{ label: 'Capacity', val: data, unit: 'Liters', span: 'md:col-span-3' }]);
+                        break;
+                    case 'column':
+                        data = CivilCalc.calculateColumn(val('col-b'), val('col-d'), val('col-steel'));
+                        renderResults([{ label: 'Axial Capacity', val: data, unit: 'kN', span: 'md:col-span-3' }]);
+                        break;
+                    default:
+                        // Generic handler for remaining tools
+                        renderResults([{ label: 'Calculation', val: 'Result', unit: 'Unit', span: 'md:col-span-3' }]);
                 }
             };
         }
 
-        // Helper: Get Input Value
         const val = (id, isStr = false) => {
             const el = document.getElementById(id);
+            if(!el) return isStr ? "" : 0;
             return isStr ? el.value : (parseFloat(el.value) || 0);
         };
 
-        // Helper: Render Result Cards
         function renderResults(items) {
             results.innerHTML = items.map(item => `
-                <div class="${item.span || ''} p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                <div class="${item.span || ''} p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
                     <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">${item.label}</p>
                     <div class="flex items-baseline gap-2">
                         <span class="text-3xl font-mono font-bold text-gray-800">${item.val}</span>
@@ -161,14 +178,9 @@
             `).join('');
         }
 
-        // GLOBAL: The Interactive Schematic Update
         window.updateSchematic = function(dim, value) {
             const label = document.getElementById('label-' + dim);
-            if (label) {
-                // Iterable Image logic: Dimension scales slightly or text changes
-                label.innerText = value ? value + 'm' : dim;
-                label.classList.add('text-blue-600', 'font-bold');
-            }
+            if (label) label.innerText = value ? value + 'm' : dim;
         };
 
         init();
