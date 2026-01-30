@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civil Calc Pro | Engineering Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .active-link { border-left: 4px solid #2563eb; background: #f1f5f9; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-xl hidden md:block overflow-y-auto">
+        <div class="p-6">
+            <h1 class="text-xl font-bold text-blue-600">Civil Calc Pro</h1>
+            <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Engineer's Toolkit</p>
+        </div>
+        <nav class="mt-4">
+            <a href="#" class="block py-3 px-6 active-link font-medium">1. Concrete & Steel</a>
+            <a href="#" class="block py-3 px-6 text-gray-600 hover:bg-gray-100">2. Length Converter</a>
+            <a href="#" class="block py-3 px-6 text-gray-600 hover:bg-gray-100">3. Earthwork</a>
+            <a href="#" class="block py-3 px-6 text-gray-600 hover:bg-gray-100">6. BBS Schedule</a>
+            <div class="border-t my-4"></div>
+            <a href="./docs/api-ref.md" class="block py-3 px-6 text-sm text-blue-500 hover:underline">📚 Documentation</a>
+        </nav>
+    </aside>
+
+    <main class="md:ml-64 p-8">
+        <header class="mb-10">
+            <h2 class="text-3xl font-semibold">Concrete & Steel Quantity</h2>
+            <p class="text-gray-500">Calculate materials for slabs, beams, and columns.</p>
+        </header>
+
+        <section class="max-w-4xl bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="space-y-4">
+                    <h3 class="font-bold text-lg mb-4">Dimensions (m)</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Length</label>
+                        <input type="number" id="len" class="w-full mt-1 p-2 border rounded" placeholder="10.0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Width / Breadth</label>
+                        <input type="number" id="wid" class="w-full mt-1 p-2 border rounded" placeholder="5.0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Depth / Thickness</label>
+                        <input type="number" id="dep" class="w-full mt-1 p-2 border rounded" placeholder="0.15">
+                    </div>
+                    <button class="w-full bg-blue-600 text-white
+
+<script type="module">
+    import CivilCalc from './src/logic/calculators.js';
+
+    const btn = document.querySelector('button');
+    btn.addEventListener('click', () => {
+        const L = parseFloat(document.getElementById('len').value) || 0;
+        const W = parseFloat(document.getElementById('wid').value) || 0;
+        const D = parseFloat(document.getElementById('dep').value) || 0;
+
+        // Using standard M20 ratio (1:1.5:3) for now
+        const results = CivilCalc.calculateConcrete(L, W, D, 1, 1.5, 3);
+
+        document.getElementById('res-cement').innerText = results.cementBags;
+        document.getElementById('res-sand').innerText = results.sand;
+        document.getElementById('res-agg').innerText = results.aggregate;
+        document.getElementById('res-wet').innerText = results.wetVolume;
+    });
+</script>
